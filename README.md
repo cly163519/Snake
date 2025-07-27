@@ -34,6 +34,9 @@ Self-collision detection
 Pause functionality
 Real-time keyboard input
 
+## 🔧 Build Instructions
+You need a GCC compiler (like [MinGW](https://www.mingw-w64.org/)) installed and available in your system `PATH`.
+
 ## 🚀 Run Instructions
 Option 1: Compile with Code::Blocks
   Open the .cbp project file and press F9 to build and run.
