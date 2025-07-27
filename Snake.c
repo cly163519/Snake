@@ -1,26 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-<<<<<<< HEAD
-#include <conio.h>  // Use _kbhit and _getch
-#include <windows.h> // Use Sleep
-
-=======
 #include <conio.h>
 #include <windows.h>
->>>>>>> 37f441b (Update C code only)
 
 #define WIDTH 20
 #define HEIGHT 20
 #define MAX_LEN 100
-<<<<<<< HEAD
-int x, y;                 // Snake head coordinate
-int fruitX, fruitY;       // Food coordinate
-int score;
-int gameOver;
-int dir;                  // A: left D: right W: up S: dow
-int tailX[MAX_LEN], tailY[MAX_LEN];  // Coordinates of each body segment
-int tailLen = 0;          // Current length
-=======
 
 int x, y;  // Snake head coordinate
 int fruitX, fruitY;
@@ -29,7 +14,6 @@ int gameOver;
 int dir;  // A: Left D: Right W: Up S: Down
 int tailX[MAX_LEN], tailY[MAX_LEN];
 int tailLen = 0;
->>>>>>> 37f441b (Update C code only)
 
 // Move the cursor
 void gotoxy(int x, int y) {
@@ -59,22 +43,13 @@ void Setup() {
 
 // Draw the game interface
 void Draw() {
-<<<<<<< HEAD
-    system("cls");  // Clear screen
-=======
     gotoxy(0, 0);
->>>>>>> 37f441b (Update C code only)
     for (int i = 0; i < WIDTH + 2; i++) printf("#");
     printf("\n");
 
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             if (j == 0) printf("#");
-<<<<<<< HEAD
-            if (i == y && j == x) printf("O");        // Head
-            else if (i == fruitY && j == fruitX) printf("F");  // Food
-            else printf(" ");
-=======
 
             int printed = 0;
             if (i == y && j == x) {
@@ -95,7 +70,6 @@ void Draw() {
 
             if (!printed) printf(" ");
 
->>>>>>> 37f441b (Update C code only)
             if (j == WIDTH - 1) printf("#");
         }
         printf("\n");
@@ -175,11 +149,7 @@ int main() {
         Draw();
         Input();
         Logic();
-<<<<<<< HEAD
-        Sleep(100);  // Control speed
-=======
         Sleep(200);  // Control the speed(the smaller the faster)
->>>>>>> 37f441b (Update C code only)
     }
 
     gotoxy(0, HEIGHT + 4);
