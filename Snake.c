@@ -3,157 +3,130 @@
 #include <conio.h>
 #include <windows.h>
 
-#define WIDTH 20
-#define HEIGHT 20
-#define MAX_LEN 100
+// Game area size
+#define W 10
+#define H 10
 
-int x, y;  // Snake head coordinate
-int fruitX, fruitY;
-int score;
-int gameOver;
-int dir;  // A: Left D: Right W: Up S: Down
-int tailX[MAX_LEN], tailY[MAX_LEN];
-int tailLen = 0;
+// Global variables
+int snakeX, snakeY;       // Snake head position
+int foodX, foodY;         // Food position
+int tailX[50], tailY[50]; // Snake body position
+int tailLen;              // Snake body length
+int dir;                  // Directions: 1left 2right 3up 4down
+int score;                // Scord
+int gameOver;             // Game over sign
 
-// Move the cursor
-void gotoxy(int x, int y) {
-    COORD coord = {x, y};
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
-
-// Hide the cursor
-void hideCursor() {
-    CONSOLE_CURSOR_INFO ci;
-    ci.dwSize = 1;
-    ci.bVisible = FALSE;
-    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &ci);
-}
-
-// Initialise the game
-void Setup() {
-    gameOver = 0;
-    dir = 0;
-    x = WIDTH / 2;
-    y = HEIGHT / 2;
-    fruitX = rand() % WIDTH;
-    fruitY = rand() % HEIGHT;
-    score = 0;
+// Initialize
+void setup() {
+    snakeX = W / 2;
+    snakeY = H / 2;
+    foodX = rand() % W;
+    foodY = rand() % H;
     tailLen = 0;
+    dir = 0;
+    score = 0;
+    gameOver = 0;
 }
 
-// Draw the game interface
-void Draw() {
-    gotoxy(0, 0);
-    for (int i = 0; i < WIDTH + 2; i++) printf("#");
-    printf("\n");
-
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            if (j == 0) printf("#");
-
-            int printed = 0;
-            if (i == y && j == x) {
-                printf("O");  // Snake Head
-                printed = 1;
-            } else if (i == fruitY && j == fruitX) {
-                printf("F");  // Food
-                printed = 1;
-            } else {
+// Picture
+void draw() {
+    system("cls");  // Clear screen
+    
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < W; j++) {
+            
+            // Draw walls
+            if (i == 0 || i == H-1 || j == 0 || j == W-1) {
+                printf("#");
+            }
+            // Draw snake head
+            else if (i == snakeY && j == snakeX) {
+                printf("O");
+            }
+            // Draw food
+            else if (i == foodY && j == foodX) {
+                printf("F");
+            }
+            // Draw snake body
+            else {
+                int isBody = 0;
                 for (int k = 0; k < tailLen; k++) {
                     if (tailX[k] == j && tailY[k] == i) {
-                        printf("o");  // Snake body
-                        printed = 1;
+                        printf("o");
+                        isBody = 1;
                         break;
                     }
                 }
+                if (!isBody) printf(" ");
             }
-
-            if (!printed) printf(" ");
-
-            if (j == WIDTH - 1) printf("#");
         }
         printf("\n");
     }
-
-    for (int i = 0; i < WIDTH + 2; i++) printf("#");
-    printf("\nScore: %d\n", score);
+    printf("Score: %d\n", score);
 }
 
-// Handling keyboard input
-void Input() {
+// Input
+void input() {
     if (_kbhit()) {
-        switch (_getch()) {
-            case 'a': if (dir != 2) dir = 1; break;
-            case 'd': if (dir != 1) dir = 2; break;
-            case 'w': if (dir != 4) dir = 3; break;
-            case 's': if (dir != 3) dir = 4; break;
-            case 'x': gameOver = 1; break;
+        char c = _getch();
+        if (c == 'a') dir = 1;  // left
+        if (c == 'd') dir = 2;  // right
+        if (c == 'w') dir = 3;  // up
+        if (c == 's') dir = 4;  // down
+        if (c == 'x') gameOver = 1;  // Quit
+    }
+}
+
+// Logic
+void logic() {
+    // The snake's body followed the snake's head
+    for (int i = tailLen - 1; i > 0; i--) {
+        tailX[i] = tailX[i-1];
+        tailY[i] = tailY[i-1];
+    }
+    if (tailLen > 0) {
+        tailX[0] = snakeX;
+        tailY[0] = snakeY;
+    }
+    
+    // Move snake head
+    if (dir == 1) snakeX--;
+    if (dir == 2) snakeX++;
+    if (dir == 3) snakeY--;
+    if (dir == 4) snakeY++;
+    
+    // Death by hitting a wall
+    if (snakeX <= 0 || snakeX >= W-1 || snakeY <= 0 || snakeY >= H-1) {
+        gameOver = 1;
+    }
+    
+    // He died from hitting itself
+    for (int i = 0; i < tailLen; i++) {
+        if (tailX[i] == snakeX && tailY[i] == snakeY) {
+            gameOver = 1;
         }
     }
-}
-
-// Updat logic
-void Logic() {
-    int prevX = tailX[0], prevY = tailY[0];
-    int prev2X, prev2Y;
-    tailX[0] = x;
-    tailY[0] = y;
-    for (int i = 1; i < tailLen; i++) {
-        prev2X = tailX[i];
-        prev2Y = tailY[i];
-        tailX[i] = prevX;
-        tailY[i] = prevY;
-        prevX = prev2X;
-        prevY = prev2Y;
-    }
-
-    switch (dir) {
-        case 1: x--; break;
-        case 2: x++; break;
-        case 3: y--; break;
-        case 4: y++; break;
-    }
-
-    // Hit the wall
-    if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
-        gameOver = 1;
-
-    // Hit itself
-    for (int i = 0; i < tailLen; i++) {
-        if (tailX[i] == x && tailY[i] == y)
-            gameOver = 1;
-    }
-
-    // Get the food
-    if (x == fruitX && y == fruitY) {
+    
+    // Eat food
+    if (snakeX == foodX && snakeY == foodY) {
         score += 10;
-        fruitX = rand() % WIDTH;
-        fruitY = rand() % HEIGHT;
         tailLen++;
+        foodX = rand() % (W-2) + 1;  // Food cannot be on the wall
+        foodY = rand() % (H-2) + 1;
     }
 }
 
-// Main program
 int main() {
-    system("mode con: cols=40 lines=30"); // Set window
-    hideCursor();
-    Setup();
-
-       for (int i = 0; i <= 1000; i++) {
-        gotoxy(0, 0);
-        printf("Number: %d", i);
-        Sleep(50);
-    }
-
+    setup();
+    
     while (!gameOver) {
-        Draw();
-        Input();
-        Logic();
-        Sleep(200);  // Control the speed(the smaller the faster)
+        draw();
+        input();
+        logic();
+        Sleep(200);  // Speed
     }
-
-    gotoxy(0, HEIGHT + 4);
-    printf("Game Over!\nFinal Score: %d\n", score);
+    
+    printf("Game Over! Score: %d\n", score);
     system("pause");
     return 0;
 }
