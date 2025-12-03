@@ -4,8 +4,8 @@
 #include <windows.h>
 
 // Game area size
-#define W 10
-#define H 10
+#define W 20
+#define H 20
 
 // Global variables
 int snakeX, snakeY;       // Snake head position
