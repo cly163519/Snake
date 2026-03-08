@@ -13,14 +13,14 @@ X: Exit Game
 - You can't hit the wall or yourself.
 
 ##  Environment
-Language: C (ANSI C)
-Compiler: GCC (MinGW or TDM-GCC recommended)
-IDE: Code::Blocks or any C-compatible IDE
-Platform: Windows (uses windows.h and conio.h)
+Language: C (ANSI C)  
+Compiler: GCC (MinGW or TDM-GCC recommended)  
+IDE: Code::Blocks or any C-compatible IDE   
+Platform: Windows (uses windows.h and conio.h)  
 
 ##  Project Structure
 
-Snake/
+Snake/  
 ├── Snake.c // Main program  
 ├── Snake.cbp // Code::Blocks project file  
 ├── README.md // Project description  
